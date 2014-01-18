@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace BulStem.Tests
 {
@@ -17,8 +18,45 @@ namespace BulStem.Tests
 
             string actual = stemmer.Stem(word);
             Assert.AreEqual(expected, actual);
-
         }
+
+        [TestMethod]
+        public void Sample_For_Github_Default()
+        {
+            //default initialization (level Low)
+            var stemmer = new BulStem.Stemmer();
+
+            string stemLevel1 = stemmer.Stem("оставката");
+            string expected = "остав";
+
+            Assert.AreEqual(expected, stemLevel1);
+        }
+
+        [TestMethod]
+        public void Sample_For_Github_Init_Level2()
+        {
+            //initialization with level (level Medium)
+            var stemmer = new BulStem.Stemmer(StemmingLevel.Medium);
+
+            string stemLevel2 = stemmer.Stem("оставката");
+            string expected = "оставк";
+
+            Assert.AreEqual(expected, stemLevel2);
+        }
+
+        [TestMethod]
+        public void Sample_For_Github_Init_Set_Level3()
+        {
+            //default initialization and later level set (level High)
+            var stemmer = new BulStem.Stemmer();
+            stemmer.SetLevel(StemmingLevel.High);
+
+            string stemLevel3 = stemmer.Stem("оставката");
+            string expected = "оставк";
+
+            Assert.AreEqual(expected, stemLevel3);
+        }
+
 
         [TestMethod]
         public void Test_If_Stemming_With_Level_1_Works()
