@@ -22,7 +22,6 @@ namespace BulStem
         public StemmingLevel Level
         {
             get { return _level; }
-            private set { _level = value; }
         }
 
         /// <summary>
@@ -32,6 +31,15 @@ namespace BulStem
         public Stemmer(StemmingLevel level = StemmingLevel.Low)
         {
             _level = level;
+            SetLevel(level);
+        }
+
+        /// <summary>
+        /// Set current stemming level - reloads stemming rules
+        /// </summary>
+        /// <param name="level">Stemming level</param>
+        public void SetLevel(StemmingLevel level)
+        {
             LoadStemmingRules(level);
         }
 
