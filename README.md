@@ -1,5 +1,5 @@
 #bulstem-cs
-===========
+-----------
 
 A Bulgarian stemmer for .Net
 
