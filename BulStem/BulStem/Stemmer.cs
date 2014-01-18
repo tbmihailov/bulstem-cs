@@ -13,10 +13,10 @@ namespace BulStem
 {
     public class Stemmer
     {
-        public Hashtable stemmingRules = new Hashtable();
-        public int STEM_BOUNDARY = 1;
-        public static Regex vocals = new Regex("[^аъоуеияю]*[аъоуеияю]", RegexOptions.Compiled);
-        public static Regex p = new Regex("([а-я-]+)\\s==>\\s([а-я]+)\\s([0-9]+)", RegexOptions.Compiled);
+        Hashtable _stemmingRules = new Hashtable();
+        int STEM_BOUNDARY = 1;
+        static Regex vocals = new Regex("[^аъоуеияю]*[аъоуеияю]", RegexOptions.Compiled);
+        static Regex p = new Regex("([а-я-]+)\\s==>\\s([а-я]+)\\s([0-9]+)", RegexOptions.Compiled);
 
         StemmingLevel _level;
         public StemmingLevel Level
@@ -25,33 +25,46 @@ namespace BulStem
             private set { _level = value; }
         }
 
-        public Stemmer(StemmingLevel level)
+        /// <summary>
+        /// Constructor with stemming level
+        /// </summary>
+        /// <param name="level">Stemming level</param>
+        public Stemmer(StemmingLevel level = StemmingLevel.Low)
         {
             _level = level;
             LoadStemmingRules(level);
         }
 
+        /// <summary>
+        /// Loads stemming rules depending of stemming level
+        /// </summary>
+        /// <param name="level"></param>
         private void LoadStemmingRules(StemmingLevel level)
         {
             switch (level)
             {
                 case StemmingLevel.Low:
-                    LoadStemmingRules("BulStem.Rules.stem_rules_context_1_utf8.txt");
+                    LoadStemmingRulesFromEmbeddedResource("BulStem.Rules.stem_rules_context_1_utf8.txt");
                     break;
                 case StemmingLevel.Medium:
-                    LoadStemmingRules("BulStem.Rules.stem_rules_context_2_utf8.txt");
+                    LoadStemmingRulesFromEmbeddedResource("BulStem.Rules.stem_rules_context_2_utf8.txt");
                     break;
                 case StemmingLevel.High:
-                    LoadStemmingRules("BulStem.Rules.stem_rules_context_3_utf8.txt");
+                    LoadStemmingRulesFromEmbeddedResource("BulStem.Rules.stem_rules_context_3_utf8.txt");
                     break;
                 default:
                     break;
             }
         }
 
-        private void LoadStemmingRules(String resourceName)
+        /// <summary>
+        /// Loads stemming rules from embedded resources
+        /// </summary>
+        /// <param name="resourceName">Embedded resource name</param>
+        /// <example >LoadStemmingRulesFromEmbeddedResource("BulStem.Rules.stem_rules_context_1_utf8.txt");</example>   
+        private void LoadStemmingRulesFromEmbeddedResource(String resourceName)
         {
-            stemmingRules.Clear();
+            _stemmingRules.Clear();
             var assembly = Assembly.GetExecutingAssembly();
             using (Stream resTream = assembly.GetManifestResourceStream(resourceName))
             {
@@ -69,7 +82,7 @@ namespace BulStem
                             {
                                 if (int.Parse(m.Groups[3].Value) > STEM_BOUNDARY)
                                 {
-                                    stemmingRules.Add(m.Groups[1].Value, m.Groups[2].Value);
+                                    _stemmingRules.Add(m.Groups[1].Value, m.Groups[2].Value);
                                 }
                             }
                         }
@@ -78,21 +91,27 @@ namespace BulStem
             }
         }
 
+        /// <summary>
+        /// Stem given word
+        /// </summary>
+        /// <param name="word">Word to stem</param>
+        /// <returns>Stem for the given word if applicable or word itself if not</returns>
         public String Stem(String word)
         {
             string wordLowered = word.ToLower();
-            Match m = vocals.Match(wordLowered, 0);
-            if (!m.Success)
+
+            Match vocalMatch = vocals.Match(wordLowered, 0);
+            if (!vocalMatch.Success)
             {
                 return wordLowered;
             }
-            
-            int matchEnd = m.Index+m.Captures[0].Value.Length;
-            for (int i = matchEnd+1; i < wordLowered.Length; i++)
+
+            int matchEnd = vocalMatch.Index + vocalMatch.Captures[0].Value.Length;
+            for (int i = matchEnd + 1; i < wordLowered.Length; i++)
             {
                 String suffix = wordLowered.Substring(i);
 
-                string newSuffix = (String)stemmingRules[suffix];
+                string newSuffix = (String)_stemmingRules[suffix];
                 if (newSuffix != null)
                 {
                     return wordLowered.Substring(0, i) + newSuffix;

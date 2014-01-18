@@ -8,7 +8,7 @@ namespace BulStem.Tests
     public class Word_Stemming_Tests
     {
         [TestMethod]
-        public void Test_If_Level_1_Works_Simple()
+        public void Test_If_Stemming_With_Level_1_Works_Simple()
         {
             var stemmer = new BulStem.Stemmer(StemmingLevel.Low);
 
@@ -21,7 +21,7 @@ namespace BulStem.Tests
         }
 
         [TestMethod]
-        public void Test_If_Level_1_Works()
+        public void Test_If_Stemming_With_Level_1_Works()
         {
             var wordsToTest = new Dictionary<string, string>();
             wordsToTest.Add("първи", "първ");
@@ -39,11 +39,10 @@ namespace BulStem.Tests
             {
                 Assert.AreEqual(word.Value, stemmer.Stem(word.Key));
             }
-
         }
 
         [TestMethod]
-        public void Test_If_Level_2_Works()
+        public void Test_If_Stemming_With_Level_2_Works()
         {
             var wordsToTest = new Dictionary<string, string>();
             wordsToTest.Add("първи", "първи");
@@ -63,7 +62,7 @@ namespace BulStem.Tests
         }
 
         [TestMethod]
-        public void Test_If_Level_3_Works()
+        public void Test_If_Stemming_With_Level_3_Works()
         {
             var wordsToTest = new Dictionary<string, string>();
             wordsToTest.Add("първи", "първи");
